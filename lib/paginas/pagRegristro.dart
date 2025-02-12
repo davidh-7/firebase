@@ -1,8 +1,11 @@
+import 'package:firebase/componentes/Btn_auten.dart';
 import 'package:firebase/componentes/TxtFld_auten.dart';
 import 'package:flutter/material.dart';
 
 class paginaregristro extends StatelessWidget {
   const paginaregristro({super.key});
+
+  void HacerRegis() {}
 
   @override
   Widget build(BuildContext context) {
@@ -87,23 +90,45 @@ class paginaregristro extends StatelessWidget {
                     obscureTxt: true),
 
                 //no eta regristrado
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("Ya eres miembro"),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    GestureDetector(
-                      child: Text("Hacer Login",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.all(25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("Ya eres miembro"),
+                      SizedBox(
+                        height: 10,
                       ),
+                      GestureDetector(
+                        child: Text(
+                          "Hacer Login",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+
+                SizedBox(
+                  height: 20,
+                ),
+
+                //Boton regristro
+                BtnAuten(
+                  Txt: 'Registrado',
+                  onTap: HacerRegis,
+                ),
+
+                  //Boton 
+                BtnAuten(
+                  Txt: 'AAAA',
+                  onTap: (){
+                    
+                  },
+                )
               ],
             ),
           ),
