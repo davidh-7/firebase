@@ -16,3 +16,13 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
+
+
+//Node.js
+// Firebase: - Autentication, -FireStore BBDD,
+//Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+//VS Code cmd: npm install -g firebase-tools
+//firebase login 
+//flutter pub global activate flutterfire_cli
+//C:\Users\d.hernandez\AppData\Local\Pub\Cache\bin\flutterfire configure
