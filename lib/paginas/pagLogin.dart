@@ -3,22 +3,13 @@ import 'package:firebase/componentes/Btn_auten.dart';
 import 'package:firebase/componentes/TxtFld_auten.dart';
 import 'package:flutter/material.dart';
 
-class paginaregristro extends StatelessWidget {
-  final Function()? hacerClick;
+class paginalogin extends StatelessWidget {
+    final Function()? hacerClick;
 
-  const paginaregristro({super.key, required this.hacerClick});
+  const paginalogin({super.key,required this.hacerClick});
 
-  void HacerRegis(BuildContext context, String email, String password,
-      String confPassword) async {
-    if (password.isEmpty || email.isEmpty) {
-      return;
-    }
-
-    if (password != confPassword) {
-      return;
-    }
-    String? error = await ServicioAuth().regristroEmailPass(email, password);
-
+  void HacerLogin(BuildContext context, String email, String password) async {
+    String? error = await ServicioAuth().loginEmailPass(email, password);
     if (error != null) {
       showDialog(
         context: context,
@@ -30,16 +21,15 @@ class paginaregristro extends StatelessWidget {
           content: Text(error),
         ),
       );
+    } else{
+      print("login hecho");
     }
-
-    try {} catch (e) {}
   }
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController tecEmail = TextEditingController();
     final TextEditingController tecPasw = TextEditingController();
-    final TextEditingController tecPasw2 = TextEditingController();
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 124, 185, 241),
@@ -62,7 +52,7 @@ class paginaregristro extends StatelessWidget {
 
                 //frase
                 Text(
-                  "crea una cuenta nueva",
+                  "Bienvenido de neuvo",
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -87,7 +77,7 @@ class paginaregristro extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: Text(
-                          "Regristro",
+                          "Hacer login",
                           style: TextStyle(color: Colors.black),
                         ),
                       ),
@@ -111,26 +101,20 @@ class paginaregristro extends StatelessWidget {
                     controller: tecPasw,
                     hintTxt: "Escribe la contraseña",
                     obscureTxt: true),
-                //confirma pasword
-                TxtFld_auten(
-                    controller: tecPasw2,
-                    hintTxt: "Vuelve a escribir la contraseña",
-                    obscureTxt: true),
-
                 //no eta regristrado
                 Padding(
                   padding: const EdgeInsets.all(25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text("Ya eres miembro"),
+                      Text("Todavia no eres miembro"),
                       SizedBox(
                         height: 10,
                       ),
                       GestureDetector(
                         onTap: hacerClick,
                         child: Text(
-                          " Hacer Login",
+                          "Registrate",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -147,9 +131,8 @@ class paginaregristro extends StatelessWidget {
 
                 //Boton regristro
                 BtnAuten(
-                  Txt: 'Registrado',
-                  onTap: () => HacerRegis(
-                      context, tecEmail.text, tecPasw.text, tecPasw2.text),
+                  Txt: 'Login',
+                  onTap: () => HacerLogin(context, tecEmail.text, tecPasw.text),
                 ),
               ],
             ),
@@ -157,5 +140,6 @@ class paginaregristro extends StatelessWidget {
         ),
       ),
     );
+    ;
   }
 }

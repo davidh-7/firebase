@@ -1,4 +1,6 @@
+import 'package:firebase/autenticaion/portal_auth.dart';
 import 'package:firebase/firebase_options.dart';
+import 'package:firebase/paginas/pagLogin.dart';
 import 'package:firebase/paginas/pagRegristro.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: paginaregristro(),
+      home: PortalAuth(),
     );
   }
 }
