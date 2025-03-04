@@ -1,6 +1,7 @@
 import 'package:firebase/autenticaion/servicio_auth.dart';
 import 'package:firebase/chat/servicio_chat.dart';
 import 'package:firebase/componentes/item_usuario.dart';
+import 'package:firebase/paginas/pagChat.dart';
 import 'package:flutter/material.dart';
 
 class paginainicio extends StatefulWidget {
@@ -16,7 +17,7 @@ class _paginainicioState extends State<paginainicio> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[200],
-        title: Text("Pagina Inicio"),
+        title: Text(ServicioAuth().getUsuarioActual()!.email.toString()),
         actions: [
           IconButton(
             onPressed: () {
@@ -43,12 +44,25 @@ class _paginainicioState extends State<paginainicio> {
                       (datosUsuario) => _contruirItemUsuairo(datosUsuario))
                   .toList(),
             );
-          }
-          ),
+          }),
     );
   }
 
   Widget _contruirItemUsuairo(Map<String, dynamic> datosUsuario) {
-    return ItemUsuario(emailUsuaio: datosUsuario["email"]);
+    if (datosUsuario["email"] == ServicioAuth().getUsuarioActual()!.email) {
+      return Container();
+    }
+
+    return ItemUsuario(
+      emailUsuaio: datosUsuario["email"],
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Paginachat(idReceptor: datosUsuario["uid"],),
+          ),
+        );
+      },
+    );
   }
 }
