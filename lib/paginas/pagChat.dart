@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/autenticaion/servicio_auth.dart';
 import 'package:firebase/chat/servicio_chat.dart';
+import 'package:firebase/componentes/BurjMensaje.dart';
 import 'package:flutter/material.dart';
 
 class Paginachat extends StatefulWidget {
@@ -32,9 +35,35 @@ class _PaginachatState extends State<Paginachat> {
 
   Widget _crearZonaMostarMensajes() {
     return Expanded(
-      child: Text("1"),
+      child: StreamBuilder(
+          stream: ServicioChat().getMensajes(
+              ServicioAuth().getUsuarioActual()!.uid, widget.idReceptor),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("Error Cargando Datos...");
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text("Cargando Mensaje....");
+            }
+
+            return ListView(
+              children:
+                  snapshot.data!.docs.map((document) => _construirItemMensaje(document)).toList(),
+            );
+          }),
     );
   }
+
+Widget _construirItemMensaje(DocumentSnapshot documentSnapshot){
+
+  Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+
+  return BurbujaMensaje(mensaje: data["mensaje"]);
+  //Text(data["mensaje"]);
+}
+
+
 
   Widget _crearZonaEscribirMensajes() {
     return Row(

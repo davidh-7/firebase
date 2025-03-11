@@ -20,14 +20,37 @@ class ServicioChat {
     String emailUsuaioActual = _auth.currentUser!.email!;
     Timestamp timestamp = Timestamp.now();
 
-   Mesaje nuevoMensaje = Mesaje(idAutor: idUsuarioActual, emailAutor: emailUsuaioActual, idReceptor: idReceptor, mensaje: mensaje, timestamp: timestamp);
+    Mesaje nuevoMensaje = Mesaje(
+        idAutor: idUsuarioActual,
+        emailAutor: emailUsuaioActual,
+        idReceptor: idReceptor,
+        mensaje: mensaje,
+        timestamp: timestamp);
 
     List<String> idUsuarios = [idUsuarioActual, idReceptor];
-    idUsuarios.sort();//ordena lista a-z
+    idUsuarios.sort(); //ordena lista a-z
 
     String idSalaChat = idUsuarios.join("_");
 
+    await _firestore
+        .collection("SalasChat")
+        .doc(idSalaChat)
+        .collection("Mensajes")
+        .add(nuevoMensaje.devuelveMensaje());
+  }
 
-    await _firestore.collection("SalasChat").doc(idSalaChat).collection("Mensajes").add(nuevoMensaje.devuelveMensaje());
+  Stream<QuerySnapshot> getMensajes(String idUsuarioActual, String idReceptor) {
+    //creamos idSalaChat
+    List<String> idUsuarios = [idUsuarioActual, idReceptor];
+    idUsuarios.sort();
+    String idSalaChat = idUsuarios.join("_");
+
+    //devulve los mensajes de esta sala
+    return _firestore
+        .collection("SalasChat")
+        .doc(idSalaChat)
+        .collection("Mensajes")
+        .orderBy("timestamp", descending: false)
+        .snapshots();
   }
 }
