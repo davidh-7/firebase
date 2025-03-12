@@ -14,6 +14,22 @@ class Paginachat extends StatefulWidget {
 
 class _PaginachatState extends State<Paginachat> {
   final TextEditingController tecMensaje = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Future.delayed(Duration(milliseconds: 500), () {
+      hacerScrollAbajo();
+    });
+  }
+
+  void hacerScrollAbajo() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent + 100,
+        duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +64,24 @@ class _PaginachatState extends State<Paginachat> {
             }
 
             return ListView(
-              children:
-                  snapshot.data!.docs.map((document) => _construirItemMensaje(document)).toList(),
+              controller: _scrollController,
+              children: snapshot.data!.docs
+                  .map((document) => _construirItemMensaje(document))
+                  .toList(),
             );
           }),
     );
   }
 
-Widget _construirItemMensaje(DocumentSnapshot documentSnapshot){
+  Widget _construirItemMensaje(DocumentSnapshot documentSnapshot) {
+    Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
 
-  Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
-
-  return BurbujaMensaje(mensaje: data["mensaje"]);
-  //Text(data["mensaje"]);
-}
-
-
+    return BurbujaMensaje(
+      mensaje: data["mensaje"],
+      idAutor: data["idAutor"],
+    );
+    //Text(data["mensaje"]);
+  }
 
   Widget _crearZonaEscribirMensajes() {
     return Row(
@@ -74,7 +92,7 @@ Widget _construirItemMensaje(DocumentSnapshot documentSnapshot){
             decoration: InputDecoration(
               hintText: "escribe tu mensaje....",
               filled: true,
-              fillColor: Colors.blueAccent[100],
+              fillColor: const Color.fromARGB(255, 139, 235, 219),
             ),
           ),
         ),
@@ -95,6 +113,11 @@ Widget _construirItemMensaje(DocumentSnapshot documentSnapshot){
   void enviarMensaje() {
     if (tecMensaje.text.isNotEmpty) {
       ServicioChat().enviarMensaje(widget.idReceptor, tecMensaje.text);
+
+      tecMensaje.clear();
+      Future.delayed(Duration(milliseconds: 50), () {
+      hacerScrollAbajo();
+    });
     }
   }
 }
