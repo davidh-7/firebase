@@ -1,6 +1,7 @@
 import 'package:firebase/autenticaion/servicio_auth.dart';
 import 'package:firebase/chat/servicio_chat.dart';
 import 'package:firebase/componentes/item_usuario.dart';
+import 'package:firebase/paginas/editardatos_usario.dart';
 import 'package:firebase/paginas/pagChat.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,15 @@ class _paginainicioState extends State<paginainicio> {
         backgroundColor: Colors.blueGrey[200],
         title: Text(ServicioAuth().getUsuarioActual()!.email.toString()),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditardatosUsario(),
+                    ));
+              },
+              icon: Icon(Icons.person)),
           IconButton(
             onPressed: () {
               ServicioAuth().hacerlogout();
@@ -59,7 +69,9 @@ class _paginainicioState extends State<paginainicio> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Paginachat(idReceptor: datosUsuario["uid"],),
+            builder: (context) => Paginachat(
+              idReceptor: datosUsuario["uid"],
+            ),
           ),
         );
       },
