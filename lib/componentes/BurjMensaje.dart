@@ -70,7 +70,7 @@ class BurbujaMensaje extends StatelessWidget {
             Row(
               mainAxisAlignment: idAutor == ServicioAuth().getUsuarioActual()!.uid
                   ? MainAxisAlignment.end
-                  : MainAxisAlignment.start,
+                  : MainAxisAlignment.start, 
               children: [
                 Text(
                   textoFecha,

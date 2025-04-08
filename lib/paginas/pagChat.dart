@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/autenticaion/servicio_auth.dart';
 import 'package:firebase/chat/servicio_chat.dart';
@@ -17,6 +19,7 @@ class _PaginachatState extends State<Paginachat> {
   final ScrollController _scrollController = ScrollController();
 
   FocusNode Teclado = FocusNode();
+  
 
   @override
   void initState() {
@@ -40,13 +43,60 @@ class _PaginachatState extends State<Paginachat> {
         duration: Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final String Correo = ServicioAuth().getUsuarioActual()!.email.toString();
+    final String Nombre = ServicioAuth().getNombreUsuarioActual().toString();
+    //final String Nombre = FirebaseFirestore;
+
+    Future<void> _titolChat() async{
+      String nomTitol;
+      if(Nombre.isEmpty){
+        setState(() {
+          nomTitol = Correo.toString();
+        });
+      }else{
+        setState(() {
+          nomTitol = Nombre.toString();
+        });
+      }
+    }
+
+    
+
+  
 
   @override
   Widget build(BuildContext context) {
+    
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[200],
-        title: Text("Sala chat"),
+        title: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection("Usuarios")
+              .doc(widget.idReceptor)
+              .get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Cargando...");
+            }
+
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Text("Sin nombre");
+            }
+
+            final datos = snapshot.data!.data() as Map<String, dynamic>;
+            final nom = datos["nom"];
+            final email = datos["email"];
+            return Text(
+              (nom != null && nom.toString().trim().isNotEmpty) ? nom : email ?? "Sin nombre",
+              style: const TextStyle(color: Colors.black87),
+            );
+          },
+        ),
+        //Text(_titolChat().toString()),
+
       ),
       body: Column(
         children: [

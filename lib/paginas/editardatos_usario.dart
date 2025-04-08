@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase/autenticaion/servicio_auth.dart';
+import 'package:firebase/componentes/TxtFld_auten.dart';
 import 'package:firebase/mongodb/db_conf.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,6 +20,8 @@ class _EditardatosUsarioState extends State<EditardatosUsario> {
   Uint8List? _imatgeEnBytes;
   final ImagePicker imagePicker = ImagePicker();
 
+  final TextEditingController tecNombre = TextEditingController();
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -30,8 +33,23 @@ class _EditardatosUsarioState extends State<EditardatosUsario> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _cargarNombreUsuario();
 
-    _connectarConMongoDB().then((_) => print("Conectar con MongoDB"));
+    //_connectarConMongoDB().then((_) => print("Conectar con MongoDB"));
+  }
+
+  Future _GuardarNombre() async {
+
+     ServicioAuth().setNombreUsuarioActual(tecNombre);
+
+  }
+
+
+  Future<void> _cargarNombreUsuario() async {
+    String nombre = await ServicioAuth().getNombreUsuarioActual();
+    setState(() {
+      tecNombre.text = nombre;
+    });
   }
 
   Future _connectarConMongoDB() async {
@@ -42,6 +60,8 @@ class _EditardatosUsarioState extends State<EditardatosUsario> {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Editar Datos Usuario"),
@@ -50,19 +70,57 @@ class _EditardatosUsarioState extends State<EditardatosUsario> {
       body: Center(
         child: Column(
           children: [
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    Text(ServicioAuth().getUsuarioActual()!.email.toString()),
+
+                    /*TxtFld_auten(
+                        controller: tecNombre,
+                        hintTxt: "ServicioAuth().getNombreUsuarioActual().toString()",
+                        obscureTxt: false),*/
+                  ],
+                )),
+
+            TextField(
+              controller: tecNombre,
+              decoration: InputDecoration(hintText: "escribe tu nombre"),
+            ),
+
+            ElevatedButton(
+                onPressed: () {
+                  _GuardarNombre();
+                },
+                child: Text("Guardar ")),
+
+            Text(
+                "___________________________________________________________________"),
+            //hehco en clase
             Text("Edita tusa datos"),
 
-            _imatgeEnBytes != null ? Image.memory(_imatgeEnBytes!,height: 200,) : Text("No se a selecionado ninguna imagen"),
+            _imatgeEnBytes != null
+                ? Image.memory(
+                    _imatgeEnBytes!,
+                    height: 200,
+                  )
+                : Text("No se a selecionado ninguna imagen"),
 
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
 
-            ElevatedButton(onPressed: (){
-              _SubirImagenes();
-            }, child: Text("Subir Imagen")),
+            ElevatedButton(
+                onPressed: () {
+                  _SubirImagenes();
+                },
+                child: Text("Subir Imagen")),
 
-            ElevatedButton(onPressed: (){
-              _recuperarImagen();
-            }, child: Text("Recuperar Imagen")),
+            ElevatedButton(
+                onPressed: () {
+                  _recuperarImagen();
+                },
+                child: Text("Recuperar Imagen")),
           ],
         ),
       ),
