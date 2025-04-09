@@ -21,50 +21,53 @@ class _paginainicioState extends State<paginainicio> {
         title: Text(ServicioAuth().getUsuarioActual()!.email.toString()),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditardatosUsario(),
-                    ));
-              },
-              icon: Icon(Icons.person)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EditardatosUsario(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.person),
+          ),
           IconButton(
             onPressed: () {
               ServicioAuth().hacerlogout();
             },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
       body: StreamBuilder(
-          stream: ServicioChat().getUsuarios(),
-          builder: (context, snapshot) {
-            //encaso de error
-            if (snapshot.hasError) {
-              return Text("Error en el snapshot");
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Cargando datos");
-            }
-            //devolviendo datos
-            return ListView(
-              children: snapshot.data!
-                  .map<Widget>(
-                      (datosUsuario) => _contruirItemUsuairo(datosUsuario))
-                  .toList(),
-            );
-          }),
+        stream: ServicioChat().getUsuarios(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text("Error en el snapshot");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text("Cargando datos");
+          }
+          return ListView(
+            children: snapshot.data!
+                .map<Widget>((datosUsuario) =>
+                    _contruirItemUsuairo(datosUsuario, context))
+                .toList(),
+          );
+        },
+      ),
     );
   }
 
-  Widget _contruirItemUsuairo(Map<String, dynamic> datosUsuario) {
+  Widget _contruirItemUsuairo(
+      Map<String, dynamic> datosUsuario, BuildContext context) {
     if (datosUsuario["email"] == ServicioAuth().getUsuarioActual()!.email) {
       return Container();
     }
 
     return ItemUsuario(
       emailUsuaio: datosUsuario["email"],
+      imagenPerfil: datosUsuario["imagenPerfil"],
       onTap: () {
         Navigator.push(
           context,

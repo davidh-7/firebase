@@ -1,0 +1,85 @@
+import 'dart:typed_data';
+
+import 'package:firebase/autenticaion/servicio_auth.dart';
+import 'package:firebase/mongodb/db_conf.dart';
+import 'package:firebase/paginas/editardatos_usario.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mongodb;
+
+class ItemUsuario extends StatefulWidget {
+  final Function()? onTap;
+  final String emailUsuaio;
+
+  const ItemUsuario({super.key, required this.emailUsuaio, required this.onTap});
+
+  @override
+  _ItemUsuarioState createState() => _ItemUsuarioState();
+}
+
+
+class _ItemUsuarioState  extends State<ItemUsuario> {
+  mongodb.Db? _db;
+  Uint8List? _imatgeEnBytes;
+
+  Future _connectarConMongoDB() async {
+    _db = await mongodb.Db.create(DBCOnf().connectionString);
+
+    await _db!.open();
+  }
+
+  Future<void> _recuperarImagen() async {
+      try {
+      final collection = _db!.collection("imagenes_perfiles");
+      final doc = await collection.findOne(
+          {"id_usuario_firebase": ServicioAuth().getUsuarioActual()!.uid});
+
+      if (doc != null && doc["imagen"] != null) {
+        final imgBson = doc["imagen"] as mongodb.BsonBinary;
+
+        setState(() {
+          _imatgeEnBytes = imgBson.byteList;
+        });
+      }
+      {
+        print("Error encontrando la imagen");
+      }
+    } catch (e) {
+      return null;
+    }
+
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _connectarConMongoDB().then((_) => print("Conectar con MongoDB"));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 140, 191, 233),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.only(top: 10, left: 40, right: 40),
+        child: Padding( 
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Icon( Image.asset(_recuperarImagen() as String) as IconData? ?? Icons.person),
+              //Icon(Image.asset(name)),
+              SizedBox(width: 12,),
+              Text(widget.emailUsuaio),
+            ],
+          ),
+        ),
+        ),
+    );
+  }
+}

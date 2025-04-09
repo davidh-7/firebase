@@ -35,7 +35,7 @@ class _EditardatosUsarioState extends State<EditardatosUsario> {
     super.initState();
     _cargarNombreUsuario();
 
-    //_connectarConMongoDB().then((_) => print("Conectar con MongoDB"));
+    _connectarConMongoDB().then((_) => print("Conectar con MongoDB"));
   }
 
   Future _GuardarNombre() async {
